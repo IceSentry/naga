@@ -43,6 +43,13 @@ pub fn parse_type(type_name: &str) -> Option<Type> {
                 width: 4,
             },
         }),
+        "uint8_t" => Some(Type {
+            name: None,
+            inner: TypeInner::Scalar {
+                kind: ScalarKind::Uint,
+                width: 1,
+            },
+        }),
         "sampler" | "samplerShadow" => Some(Type {
             name: None,
             inner: TypeInner::Sampler {

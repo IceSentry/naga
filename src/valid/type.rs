@@ -228,7 +228,7 @@ impl super::Validator {
                     width == 4
                 }
             }
-            crate::ScalarKind::Sint | crate::ScalarKind::Uint => width == 4,
+            crate::ScalarKind::Sint | crate::ScalarKind::Uint => width == 4 || width == 1,
         };
         if good {
             Ok(())
