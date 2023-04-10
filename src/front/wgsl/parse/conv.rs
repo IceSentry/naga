@@ -108,6 +108,7 @@ pub fn get_scalar_type(word: &str) -> Option<(crate::ScalarKind, crate::Bytes)> 
         "f64" => Some((crate::ScalarKind::Float, 8)),
         "i32" => Some((crate::ScalarKind::Sint, 4)),
         "u32" => Some((crate::ScalarKind::Uint, 4)),
+        "u8" => Some((crate::ScalarKind::Uint, 1)),
         "bool" => Some((crate::ScalarKind::Bool, crate::BOOL_WIDTH)),
         _ => None,
     }
