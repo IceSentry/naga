@@ -3589,6 +3589,9 @@ impl<W: Write> Writer<W> {
                 crate::ShaderStage::Compute { .. } => {
                     ("kernel", LocationMode::Uniform, LocationMode::Uniform)
                 }
+                crate::ShaderStage::Mesh { .. } => {
+                    return Err(Error::FeatureNotImplemented("mesh shader".into()))
+                }
             };
 
             // List all the Naga `EntryPoint`'s `Function`'s arguments,

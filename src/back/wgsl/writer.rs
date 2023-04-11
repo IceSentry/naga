@@ -162,11 +162,18 @@ impl<W: Write> Writer<W> {
         // Write all entry points
         for (index, ep) in module.entry_points.iter().enumerate() {
             let attributes = match ep.stage {
-                ShaderStage::Vertex | ShaderStage::Fragment => vec![Attribute::Stage(ep.stage)],
+                ShaderStage::Vertex | ShaderStage::Fragment => {
+                    vec![Attribute::Stage(ep.stage)]
+                }
                 ShaderStage::Compute => vec![
                     Attribute::Stage(ShaderStage::Compute),
                     Attribute::WorkGroupSize(ep.workgroup_size),
                 ],
+                ShaderStage::Mesh => {
+                    return Err(Error::Custom(
+                        "Mesh shader stage not supported by wgsl".into(),
+                    ))
+                }
             };
 
             self.write_attributes(&attributes)?;
@@ -200,6 +207,11 @@ impl<W: Write> Writer<W> {
                     ShaderStage::Compute => "ComputeOutput",
                     ShaderStage::Fragment => "FragmentOutput",
                     ShaderStage::Vertex => "VertexOutput",
+                    ShaderStage::Mesh => {
+                        return Err(Error::Custom(
+                            "mesh shader stage is not supported by wgsl".into(),
+                        ))
+                    }
                 };
 
                 write!(self.out, "{name}")?;
@@ -328,6 +340,11 @@ impl<W: Write> Writer<W> {
                         ShaderStage::Vertex => "vertex",
                         ShaderStage::Fragment => "fragment",
                         ShaderStage::Compute => "compute",
+                        ShaderStage::Mesh => {
+                            return Err(Error::Custom(
+                                "Wgsl doesn't support mesh shaders".to_string(),
+                            ))
+                        }
                     };
                     write!(self.out, "@{stage_str} ")?;
                 }
@@ -1782,7 +1799,8 @@ fn builtin_str(built_in: crate::BuiltIn) -> Result<&'static str, Error> {
         | Bi::CullDistance
         | Bi::PointSize
         | Bi::PointCoord
-        | Bi::WorkGroupSize => {
+        | Bi::WorkGroupSize
+        | Bi::PrimitiveCountNV => {
             return Err(Error::Custom(format!("Unsupported builtin {built_in:?}")))
         }
     })

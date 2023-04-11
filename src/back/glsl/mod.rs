@@ -335,7 +335,7 @@ impl fmt::Display for VaryingName<'_> {
         match *self.binding {
             crate::Binding::Location { location, .. } => {
                 let prefix = match (self.stage, self.output) {
-                    (ShaderStage::Compute, _) => unreachable!(),
+                    (ShaderStage::Compute, _) | (ShaderStage::Mesh, _) => unreachable!(),
                     // pipeline to vertex
                     (ShaderStage::Vertex, false) => "p2vs",
                     // vertex to fragment
@@ -362,6 +362,7 @@ impl ShaderStage {
             ShaderStage::Compute => "cs",
             ShaderStage::Fragment => "fs",
             ShaderStage::Vertex => "vs",
+            ShaderStage::Mesh => "ms",
         }
     }
 }
@@ -1277,6 +1278,7 @@ impl<'a, W: Write> Writer<'a, W> {
             ShaderStage::Vertex => output,
             ShaderStage::Fragment => !output,
             ShaderStage::Compute => false,
+            ShaderStage::Mesh => false,
         };
 
         // Write the I/O locations, if allowed
@@ -4081,6 +4083,8 @@ const fn glsl_built_in(
         Bi::WorkGroupId => "gl_WorkGroupID",
         Bi::WorkGroupSize => "gl_WorkGroupSize",
         Bi::NumWorkGroups => "gl_NumWorkGroups",
+        // mesh
+        Bi::PrimitiveCountNV => "gl_PrimitiveCountNV",
     }
 }
 

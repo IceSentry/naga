@@ -199,6 +199,7 @@ impl VaryingContext<'_> {
                             St::Vertex => self.output,
                             St::Fragment => !self.output,
                             St::Compute => false,
+                            St::Mesh => todo!(),
                         },
                         *ty_inner
                             == Ti::Vector {
@@ -211,6 +212,7 @@ impl VaryingContext<'_> {
                         match self.stage {
                             St::Vertex | St::Fragment => !self.output,
                             St::Compute => false,
+                            St::Mesh => todo!(),
                         },
                         *ty_inner
                             == Ti::Scalar {
@@ -279,6 +281,14 @@ impl VaryingContext<'_> {
                                 width,
                             },
                     ),
+                    Bi::PrimitiveCountNV => (
+                        self.stage == St::Mesh && self.output,
+                        *ty_inner
+                            == Ti::Scalar {
+                                kind: Sk::Uint,
+                                width,
+                            },
+                    ),
                 };
 
                 if !visible {
@@ -312,6 +322,7 @@ impl VaryingContext<'_> {
                     crate::ShaderStage::Vertex => self.output,
                     crate::ShaderStage::Fragment => !self.output,
                     crate::ShaderStage::Compute => false,
+                    crate::ShaderStage::Mesh => todo!(),
                 };
 
                 // It doesn't make sense to specify a sampling when `interpolation` is `Flat`, but
@@ -579,6 +590,7 @@ impl super::Validator {
                 crate::ShaderStage::Vertex => ShaderStages::VERTEX,
                 crate::ShaderStage::Fragment => ShaderStages::FRAGMENT,
                 crate::ShaderStage::Compute => ShaderStages::COMPUTE,
+                crate::ShaderStage::Mesh => ShaderStages::MESH,
             };
 
             if !info.available_stages.contains(stage_bit) {

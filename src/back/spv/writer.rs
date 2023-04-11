@@ -773,6 +773,31 @@ impl Writer {
                 .to_words(&mut self.logical_layout.execution_modes);
                 spirv::ExecutionModel::GLCompute
             }
+            crate::ShaderStage::Mesh => {
+                // Each OpEntryPoint with the MeshNV Execution Model must have an OpExecutionMode with exactly one of
+                // OutputPoints, OutputLinesNV, or OutputTrianglesNV execution modes.
+                Instruction::execution_mode(
+                    function_id,
+                    spirv::ExecutionMode::OutputTrianglesNV,
+                    &entry_point.workgroup_size,
+                )
+                .to_words(&mut self.logical_layout.execution_modes);
+                // Each OpEntryPoint with the MeshNV Execution Model must specify both the
+                // OutputPrimitivesNV and OutputVertices execution modes.
+                Instruction::execution_mode(
+                    function_id,
+                    spirv::ExecutionMode::OutputPrimitivesNV,
+                    &entry_point.workgroup_size,
+                )
+                .to_words(&mut self.logical_layout.execution_modes);
+                Instruction::execution_mode(
+                    function_id,
+                    spirv::ExecutionMode::OutputVertices,
+                    &entry_point.workgroup_size,
+                )
+                .to_words(&mut self.logical_layout.execution_modes);
+                spirv::ExecutionModel::MeshNV
+            }
         };
         //self.check(exec_model.required_capabilities())?;
 
@@ -1527,6 +1552,8 @@ impl Writer {
                     Bi::WorkGroupId => BuiltIn::WorkgroupId,
                     Bi::WorkGroupSize => BuiltIn::WorkgroupSize,
                     Bi::NumWorkGroups => BuiltIn::NumWorkgroups,
+                    // mesh
+                    Bi::PrimitiveCountNV => BuiltIn::PrimitiveCountNV,
                 };
 
                 self.decorate(id, Decoration::BuiltIn, &[built_in as u32]);

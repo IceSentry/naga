@@ -208,6 +208,15 @@ impl Frontend {
                     storage: StorageQualifier::Output,
                 }
             }
+            "gl_PrimitiveCountNV" => BuiltInData {
+                inner: TypeInner::Scalar {
+                    kind: ScalarKind::Uint,
+                    width: 4,
+                },
+                builtin: BuiltIn::PrimitiveCountNV,
+                mutable: true,
+                storage: StorageQualifier::Output,
+            },
             _ => {
                 let builtin = match name {
                     "gl_BaseVertex" => BuiltIn::BaseVertex,

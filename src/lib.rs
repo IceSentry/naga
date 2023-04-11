@@ -378,6 +378,7 @@ pub enum ShaderStage {
     Vertex,
     Fragment,
     Compute,
+    Mesh,
 }
 
 /// Addressing space of variables.
@@ -432,6 +433,8 @@ pub enum BuiltIn {
     WorkGroupId,
     WorkGroupSize,
     NumWorkGroups,
+    // mesh
+    PrimitiveCountNV,
 }
 
 /// Number of bytes per scalar.
